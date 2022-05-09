@@ -49,6 +49,11 @@ public class DepreciationCalculator {
 			}
 		}
 		
+		for (int i = 0; i < yearsToCalcDepFor; i++) {
+			model.addRow(new Object[] {"Total depreciation for the year " + (firstYear + i) + ":",
+					straightLine.totalDepreciationForTheYear.get(firstYear + i)});
+		}
+		
 
 		table.setBounds(30, 40, 230, 280);
 

@@ -19,6 +19,7 @@ public class StraightLine extends Depreciation {
     int ignoreYearYesOrNo;
     
     public Hashtable<Integer, Integer>[] yearlyDepreciation;
+    public Hashtable<Integer, Integer> totalDepreciationForTheYear = new Hashtable<>();
 
 	public StraightLine(int[] cost, String[] purchaseDate, String yearEnding, int yearsToCalcDepFor, int firstYear, int numOfNCA) {
 		super(cost, purchaseDate, yearEnding, yearsToCalcDepFor, firstYear, numOfNCA);	
@@ -32,6 +33,21 @@ public class StraightLine extends Depreciation {
 		
 		this.yearEndingDay = dayMonthYear[0];
 		this.yearEndingMonth = dayMonthYear[1];
+		
+	}
+	
+	public void findTotalDepreciationForTheYear() {
+		int totalDepForYear = 0;
+		for (int i = 0; i < this.yearsToCalcDepFor; i++) {
+			for (int j = 0; j < this.numOfNCA; j++) {
+				totalDepForYear += yearlyDepreciation[j].get(this.firstYear + i);
+				
+				if (j == this.numOfNCA - 1) {
+					totalDepreciationForTheYear.put(this.firstYear + i, totalDepForYear);
+					totalDepForYear = 0;
+				}
+			}
+		}
 	}
 	
 	public void calculate() {
@@ -59,7 +75,7 @@ public class StraightLine extends Depreciation {
 				depreciation = this.depreciationRate * this.cost[i];
 				
 				for (int j = 0; j < this.yearsToCalcDepFor; j++) {
-					this.yearlyDepreciation[i].put(this.firstYear + j, (int)depreciation);
+					yearlyDepreciation[i].put(this.firstYear + j, (int)depreciation);
 				}
 		    }
 			
@@ -96,7 +112,6 @@ public class StraightLine extends Depreciation {
 	        } else {
 	        	
 	        	String[] purchaseDateSplit;
-
 	        	for (int i = 0; i < this.numOfNCA; i++) {
 	        		purchaseDateSplit = purchaseDate[i].split("/");
 	        		purchaseDay = Integer.parseInt(purchaseDateSplit[0]);
@@ -117,10 +132,10 @@ public class StraightLine extends Depreciation {
 					for (int j = 1; j < this.yearsToCalcDepFor; j++) {
 						yearlyDepreciation[i].put(this.firstYear + j, (int)depreciation);
 					}
-		        	System.out.println(yearlyDepreciation[i]);
 	        	}
 	        } 
 		}
+		findTotalDepreciationForTheYear();
 	}
 	
 }
