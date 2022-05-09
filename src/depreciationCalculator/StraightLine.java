@@ -96,6 +96,7 @@ public class StraightLine extends Depreciation {
 	        } else {
 	        	
 	        	String[] purchaseDateSplit;
+
 	        	for (int i = 0; i < this.numOfNCA; i++) {
 	        		purchaseDateSplit = purchaseDate[i].split("/");
 	        		purchaseDay = Integer.parseInt(purchaseDateSplit[0]);
@@ -104,25 +105,19 @@ public class StraightLine extends Depreciation {
 	        		
 	        		yearlyDepreciation[i] = new Hashtable<Integer, Integer>();
 
-		        	if (firstYear == purchaseYear) {
-			        	if (purchaseMonth > this.yearEndingMonth) {
-			        		depreciation = 0;
-			        	} else if (purchaseMonth < this.yearEndingMonth) {
-			        		int monthsElapsed = this.yearEndingMonth - purchaseMonth + 1;
-			        		depreciation = ((this.cost[i] - this.scrapValue[i]) / this.expectedUsefulLife[i]) * monthsElapsed/12;
-			        	}
-			        	yearlyDepreciation[i].put(this.firstYear, (int) depreciation);		        	
+			        if (purchaseMonth > this.yearEndingMonth) {
+			       		depreciation = 0;
+			       	} else if (purchaseMonth < this.yearEndingMonth) {
+			       		int monthsElapsed = this.yearEndingMonth - purchaseMonth + 1;
+			       		depreciation = ((this.cost[i] - this.scrapValue[i]) / this.expectedUsefulLife[i]) * monthsElapsed/12;
+			        }
+			       	yearlyDepreciation[i].put(this.firstYear, (int)depreciation);		        	
 			        	
-			        	depreciation = ((this.cost[i] - this.scrapValue[i]) / this.expectedUsefulLife[i]);
-						for (int j = 1; j < this.yearsToCalcDepFor; j++) {
-							yearlyDepreciation[i].put(this.firstYear + j, (int)depreciation);
-						}
-			        	
-		        	} else if (firstYear > purchaseYear) {
-						for (int j = 0; j < this.yearsToCalcDepFor; j++) {
-							yearlyDepreciation[i].put(this.firstYear + j, (int)depreciation);
-						}
-		        	}
+			       	depreciation = ((this.cost[i] - this.scrapValue[i]) / this.expectedUsefulLife[i]);
+					for (int j = 1; j < this.yearsToCalcDepFor; j++) {
+						yearlyDepreciation[i].put(this.firstYear + j, (int)depreciation);
+					}
+		        	System.out.println(yearlyDepreciation[i]);
 	        	}
 	        } 
 		}

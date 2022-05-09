@@ -30,7 +30,7 @@ public class DepreciationCalculator {
 			straightLine = new StraightLine(cost, purchaseDate, yearEnding, yearsToCalcDepFor, firstYear, numOfNCA);
 			straightLine.calculate();
 		}
-
+		
 		JFrame jFrame = new JFrame();
 		JTable table = new JTable(new DefaultTableModel(new Object[]{"-", "Depreciation"}, 0));
 
@@ -38,16 +38,16 @@ public class DepreciationCalculator {
 
 		model.addRow(new Object[]{"End of the accounting year ", yearEnding});
 		for (int i = 0; i < numOfNCA; i++) {
+
 			model.addRow(new Object[]{"Non-current asset " + (i + 1)});
 			model.addRow(new Object[]{"Cost", cost[i]});
 			
 			model.addRow(new Object[]{"Date of purchase", purchaseDate[i]});
 			for (int j = 0; j < yearsToCalcDepFor; j++) {
 				model.addRow(new Object[] {"Depreciation for " + String.valueOf(firstYear + j), 
-						String.valueOf(straightLine.yearlyDepreciation[1].get(firstYear + j))});
+						String.valueOf(straightLine.yearlyDepreciation[i].get(firstYear + j))});
 			}
 		}
-		
 		
 
 		table.setBounds(30, 40, 230, 280);
