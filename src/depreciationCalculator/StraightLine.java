@@ -1,11 +1,12 @@
 package depreciationCalculator;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class StraightLine extends Depreciation {
 	
-	public int scrapValue;
-	public int expectedUsefulLife;
+	public int[] scrapValue;
+	public int[] expectedUsefulLife;
 	public float depreciationRate;
 	
 	public int purchaseDay;
@@ -17,28 +18,13 @@ public class StraightLine extends Depreciation {
 	
     int ignoreYearYesOrNo;
     
-    public Hashtable<Integer, Integer> yearlyDepreciation = new Hashtable<Integer, Integer>();
+    public Hashtable<Integer, Integer>[] yearlyDepreciation;
 
-	public StraightLine(int cost, String purchaseDate, String yearEnding, int yearsToCalcDepFor, int firstYear) {
-		super(cost, purchaseDate, yearEnding, yearsToCalcDepFor, firstYear);
-		
-		splitDates();
-	}
-	
-	public void splitDates() {
-		
-		// Split date non-current asset was purchased
-		int[] dayMonthYear = new int[3];
-		String[] purchaseDateSplit = purchaseDate.split("/");
-		for (int i = 0; i < purchaseDateSplit.length; i++) {
-			dayMonthYear[i] = Integer.parseInt(purchaseDateSplit[i]);
-		}
-		
-		this.purchaseDay = dayMonthYear[0];
-		this.purchaseMonth = dayMonthYear[1];
-		this.purchaseYear = dayMonthYear[2];
+	public StraightLine(int[] cost, String[] purchaseDate, String yearEnding, int yearsToCalcDepFor, int firstYear, int numOfNCA) {
+		super(cost, purchaseDate, yearEnding, yearsToCalcDepFor, firstYear, numOfNCA);	
 		
 		// Split year ending date of business
+		int[] dayMonthYear = new int[2];
 		String[] yearEndingDateSplit = yearEnding.split("/");
 		for (int i = 0; i < yearEndingDateSplit.length; i++) {
 			dayMonthYear[i] = Integer.parseInt(yearEndingDateSplit[i]);
@@ -46,13 +32,15 @@ public class StraightLine extends Depreciation {
 		
 		this.yearEndingDay = dayMonthYear[0];
 		this.yearEndingMonth = dayMonthYear[1];
-
 	}
-	
 	
 	public void calculate() {
 		int technique;
 		float depreciation = 0;
+		this.scrapValue = new int[numOfNCA];
+		this.expectedUsefulLife = new int[numOfNCA];
+		yearlyDepreciation = new Hashtable[numOfNCA];
+		
 		while (true) {
 		    System.out.println("Enter the corresponding for the info provided: ");
 		    System.out.println(" 1.  Rate of depreciation \n 2.  Scrap Value");
@@ -66,18 +54,23 @@ public class StraightLine extends Depreciation {
 			
 		    System.out.println("Enter depreciation rate: ");
 		    this.depreciationRate = scanner.nextFloat();
-			depreciation = this.depreciationRate * this.cost;
-			
-			for (int i = 0; i < this.yearsToCalcDepFor; i++) {
-				this.yearlyDepreciation.put(this.firstYear + i, (int)depreciation);
-			}
+		    
+		    for (int i = 0; i < this.numOfNCA; i++) {
+				depreciation = this.depreciationRate * this.cost[i];
+				
+				for (int j = 0; j < this.yearsToCalcDepFor; j++) {
+					this.yearlyDepreciation[i].put(this.firstYear + j, (int)depreciation);
+				}
+		    }
 			
 		} else {
-	        System.out.print("Enter scrap value: ");
-	        this.scrapValue = scanner.nextInt();
-	        
-	        System.out.print("Enter expected useful life: ");
-	        this.expectedUsefulLife = scanner.nextInt();
+			for (int i = 0; i < this.numOfNCA; i++) {
+		        System.out.print("Enter scrap value of non-current asset " + (i + 1) + ":");
+		        this.scrapValue[i] = scanner.nextInt();
+		        
+		        System.out.print("Enter expected useful life of non-current asset " + (i + 1) + ":");
+		        this.expectedUsefulLife[i] = scanner.nextInt();
+			}
 	        
 		    while (true) {
 				System.out.print("Calculate depreciation for the year of purchase? ");
@@ -91,32 +84,45 @@ public class StraightLine extends Depreciation {
 		    }
 
 	        if (ignoreYearYesOrNo == 1) {
-	        	depreciation = (this.cost - this.scrapValue) / this.expectedUsefulLife;
 	        	
-				for (int i = 0; i < this.yearsToCalcDepFor; i++) {
-					yearlyDepreciation.put(this.firstYear + i, (int)depreciation);
-				}
+	        	for (int i = 0; i < numOfNCA; i++) {
+		        	depreciation = (this.cost[i] - this.scrapValue[i]) / this.expectedUsefulLife[i];
+		        	
+					for (int j = 0; j < this.yearsToCalcDepFor; j++) {
+						yearlyDepreciation[i].put(this.firstYear + j, (int)depreciation);
+					}
+	        	}
 				
 	        } else {
 	        	
-	        	if (firstYear == purchaseYear) {
-		        	if (this.purchaseMonth > this.yearEndingMonth) {
-		        		depreciation = 0;
-		        	} else if (this.purchaseMonth < this.yearEndingMonth) {
-		        		int monthsElapsed = this.yearEndingMonth - this.purchaseMonth + 1;
-		        		depreciation = ((this.cost - this.scrapValue) / this.expectedUsefulLife) * monthsElapsed/12;
+	        	String[] purchaseDateSplit;
+	        	for (int i = 0; i < this.numOfNCA; i++) {
+	        		purchaseDateSplit = purchaseDate[i].split("/");
+	        		purchaseDay = Integer.parseInt(purchaseDateSplit[0]);
+	        		purchaseMonth = Integer.parseInt(purchaseDateSplit[1]);
+	        		purchaseYear = Integer.parseInt(purchaseDateSplit[2]);
+	        		
+	        		yearlyDepreciation[i] = new Hashtable<Integer, Integer>();
+
+		        	if (firstYear == purchaseYear) {
+			        	if (purchaseMonth > this.yearEndingMonth) {
+			        		depreciation = 0;
+			        	} else if (purchaseMonth < this.yearEndingMonth) {
+			        		int monthsElapsed = this.yearEndingMonth - purchaseMonth + 1;
+			        		depreciation = ((this.cost[i] - this.scrapValue[i]) / this.expectedUsefulLife[i]) * monthsElapsed/12;
+			        	}
+			        	yearlyDepreciation[i].put(this.firstYear, (int) depreciation);		        	
+			        	
+			        	depreciation = ((this.cost[i] - this.scrapValue[i]) / this.expectedUsefulLife[i]);
+						for (int j = 1; j < this.yearsToCalcDepFor; j++) {
+							yearlyDepreciation[i].put(this.firstYear + j, (int)depreciation);
+						}
+			        	
+		        	} else if (firstYear > purchaseYear) {
+						for (int j = 0; j < this.yearsToCalcDepFor; j++) {
+							yearlyDepreciation[i].put(this.firstYear + j, (int)depreciation);
+						}
 		        	}
-		        	yearlyDepreciation.put(this.firstYear, (int) depreciation);		        	
-		        	
-		        	depreciation = ((this.cost - this.scrapValue) / this.expectedUsefulLife);
-					for (int i = 1; i < this.yearsToCalcDepFor; i++) {
-						yearlyDepreciation.put(this.firstYear + i, (int)depreciation);
-					}
-		        	
-	        	} else if (firstYear > purchaseYear) {
-					for (int i = 0; i < this.yearsToCalcDepFor; i++) {
-						yearlyDepreciation.put(this.firstYear + i, (int)depreciation);
-					}
 	        	}
 	        } 
 		}

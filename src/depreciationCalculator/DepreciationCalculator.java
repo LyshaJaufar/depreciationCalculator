@@ -12,10 +12,11 @@ import javax.swing.table.DefaultTableModel;
 
 public class DepreciationCalculator {
 	
-	static int cost;
+	static int numOfNCA;
+	static int[] cost;
 	static int yearsToCalcDepFor;
 	static int firstYear;
-	static String purchaseDate;
+	static String[] purchaseDate;
 	static String yearEnding;
 	static Scanner scanner = new Scanner(System.in);  
 	static StraightLine straightLine;
@@ -26,20 +27,28 @@ public class DepreciationCalculator {
 		int method = chooseDepMethod();
 		
 		if (method == 1) {
-			straightLine = new StraightLine(cost, purchaseDate, yearEnding, yearsToCalcDepFor, firstYear);
+			straightLine = new StraightLine(cost, purchaseDate, yearEnding, yearsToCalcDepFor, firstYear, numOfNCA);
 			straightLine.calculate();
 		}
 
 		JFrame jFrame = new JFrame();
-		JTable table = new JTable(new DefaultTableModel(new Object[]{"-", "Non-current asset"}, 0));
-		
+		JTable table = new JTable(new DefaultTableModel(new Object[]{"-", "Depreciation"}, 0));
+
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
-		model.addRow(new Object[]{"Date of purchase", String.valueOf(purchaseDate)});
-		model.addRow(new Object[]{"Cost", String.valueOf(cost)});
-		for (int i = 0; i < yearsToCalcDepFor; i++) {
-			model.addRow(new Object[] {"Depreciation for: " + String.valueOf(firstYear + i), 
-					String.valueOf(straightLine.yearlyDepreciation.get(firstYear + i))});
+
+		model.addRow(new Object[]{"End of the accounting year ", yearEnding});
+		for (int i = 0; i < numOfNCA; i++) {
+			model.addRow(new Object[]{"Non-current asset " + (i + 1)});
+			model.addRow(new Object[]{"Cost", cost[i]});
+			
+			model.addRow(new Object[]{"Date of purchase", purchaseDate[i]});
+			for (int j = 0; j < yearsToCalcDepFor; j++) {
+				model.addRow(new Object[] {"Depreciation for " + String.valueOf(firstYear + j), 
+						String.valueOf(straightLine.yearlyDepreciation[1].get(firstYear + j))});
+			}
 		}
+		
+		
 
 		table.setBounds(30, 40, 230, 280);
 
@@ -51,30 +60,43 @@ public class DepreciationCalculator {
 	}
 	
 	public static void getUserInput() {
+		
+		// prompt user for number of assets to calc dep for
+	    System.out.println("Enter the number of non-current assets you want to calculate depreciation for: ");
+	    numOfNCA = scanner.nextInt();
 	    
-		while (true) {
-	        System.out.print("Enter the date the non-current asset was purchased (day/month/year separated by '/'): ");
-	        purchaseDate = scanner.nextLine();
-	        if (purchaseDate.length() != 0) {
-	        	break;	        	
-	        }
-		}
+	    cost = new int[numOfNCA];
+	    purchaseDate = new String[numOfNCA];
+	    
+	    for (int i = 0; i < numOfNCA; i++) {
+		    System.out.println("Enter cost of your non-current asset " + (i + 1) + ":");
+		    cost[i] = scanner.nextInt();
+	    }
+	    
+	    for (int i = 0; i < numOfNCA; i++) {
+	    	while (true) {
+
+		        System.out.print("Enter the date the non-current asset " +(i + 1) + " was purchased (day/month/year separated by '/'): ");
+		        purchaseDate[i] = scanner.next();
+		        if (purchaseDate[i].length() != 0) {
+		        	break;	        	
+		        }
+	    	}
+	    }
+	
 		while (true) {
 	        System.out.print("Enter the end of the accounting year (day/month separated by '/'): ");
-	        yearEnding = scanner.nextLine();
+	        yearEnding = scanner.next();
 	        if (yearEnding.length() != 0) {
 	        	break;	        	
 	        }
 		}
-        
-	    System.out.println("Enter cost of your non-current asset: ");
-	    cost = scanner.nextInt();
-	    
+        	    
 	    while (true) {
 	    	System.out.println("Enter first year to calculate depreciation for: ");
 	    	firstYear = scanner.nextInt();
 	    	
-	    	if (firstYear > 0) {
+	    	if (firstYear > 1000) {
 	    		break;
 	    	}
 	    }
