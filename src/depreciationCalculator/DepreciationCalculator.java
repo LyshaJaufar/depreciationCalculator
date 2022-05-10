@@ -20,40 +20,63 @@ public class DepreciationCalculator {
 	static String yearEnding;
 	static Scanner scanner = new Scanner(System.in);  
 	static StraightLine straightLine;
+	static ReducingBalance reducingBalance;
 
 	public static void main(String[] args) {
 
 		getUserInput();
 		int method = chooseDepMethod();
-		
-		if (method == 1) {
-			straightLine = new StraightLine(cost, purchaseDate, yearEnding, yearsToCalcDepFor, firstYear, numOfNCA);
-			straightLine.calculate();
-		}
-		
+				
 		JFrame jFrame = new JFrame();
 		JTable table = new JTable(new DefaultTableModel(new Object[]{"-", "Depreciation"}, 0));
 
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
-
 		model.addRow(new Object[]{"End of the accounting year ", yearEnding});
-		for (int i = 0; i < numOfNCA; i++) {
-
-			model.addRow(new Object[]{"Non-current asset " + (i + 1)});
-			model.addRow(new Object[]{"Cost", cost[i]});
+		
+		if (method == 1) {
+			straightLine = new StraightLine(cost, purchaseDate, yearEnding, yearsToCalcDepFor, firstYear, numOfNCA);
+			straightLine.calculate();
 			
-			model.addRow(new Object[]{"Date of purchase", purchaseDate[i]});
-			for (int j = 0; j < yearsToCalcDepFor; j++) {
-				model.addRow(new Object[] {"Depreciation for " + String.valueOf(firstYear + j), 
-						String.valueOf(straightLine.yearlyDepreciation[i].get(firstYear + j))});
+			for (int i = 0; i < numOfNCA; i++) {
+
+				model.addRow(new Object[]{"Non-current asset " + (i + 1)});
+				model.addRow(new Object[]{"Cost", cost[i]});
+				model.addRow(new Object[]{"Date of purchase", purchaseDate[i]});
+				
+				for (int j = 0; j < yearsToCalcDepFor; j++) {
+					model.addRow(new Object[] {"Depreciation for " + String.valueOf(firstYear + j), 
+							String.valueOf(straightLine.yearlyDepreciation[i].get(firstYear + j))});
+				}
+			}
+			
+			for (int i = 0; i < yearsToCalcDepFor; i++) {
+				model.addRow(new Object[] {"Total depreciation for the year " + (firstYear + i) + ":",
+						straightLine.totalDepreciationForTheYear.get(firstYear + i)});
+			}
+			
+		} else if (method == 2) {
+			reducingBalance = new ReducingBalance(cost, purchaseDate, yearEnding, yearsToCalcDepFor, firstYear, numOfNCA);
+			reducingBalance.calculate();
+			
+			for (int i = 0; i < numOfNCA; i++) {
+				model.addRow(new Object[]{"Non-current asset " + (i + 1)});
+				model.addRow(new Object[]{"Cost", cost[i]});
+				model.addRow(new Object[]{"Date of purchase", purchaseDate[i]});
+				
+				for (int j = 0; j < yearsToCalcDepFor; j++) {
+					model.addRow(new Object[] {"Accumulated Depreciation " + String.valueOf(firstYear + j), 
+							String.valueOf(reducingBalance.accumulatedDepreciation[i].get(firstYear + j))});
+					model.addRow(new Object[] {"Net Book Value " + String.valueOf(firstYear + j), 
+							String.valueOf(reducingBalance.netBookValue[i].get(firstYear + j))});
+					model.addRow(new Object[] {"Depreciation for " + String.valueOf(firstYear + j), 
+							String.valueOf(reducingBalance.yearlyDepreciation[i].get(firstYear + j))});
+				}
+			}
+			for (int i = 0; i < yearsToCalcDepFor; i++) {
+				model.addRow(new Object[] {"Total depreciation for the year " + (firstYear + i) + ":",
+						reducingBalance.totalDepreciationForTheYear.get(firstYear + i)});
 			}
 		}
-		
-		for (int i = 0; i < yearsToCalcDepFor; i++) {
-			model.addRow(new Object[] {"Total depreciation for the year " + (firstYear + i) + ":",
-					straightLine.totalDepreciationForTheYear.get(firstYear + i)});
-		}
-		
 
 		table.setBounds(30, 40, 230, 280);
 
