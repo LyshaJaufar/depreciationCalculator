@@ -58,14 +58,11 @@ public class ReducingBalance extends Depreciation {
 				    accumulatedDep += depreciation;
 					NBV = this.cost[i] - accumulatedDep;
 				    depreciation = (NBV * this.depreciationRate);
-		    		
-				    System.out.println(purchaseYear);
-				    System.out.println(this.firstYear);
+
 					if (purchaseYear > this.firstYear + j) {
 					    accumulatedDep = 0;
 						NBV = 0;
 					    depreciation = 0;
-
 					}
 						
 					this.yearlyDepreciation[i].put(this.firstYear + j, (int)depreciation);

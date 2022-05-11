@@ -47,6 +47,7 @@ public class DepreciationCalculator {
 					model.addRow(new Object[] {"Depreciation for " + String.valueOf(firstYear + j), 
 							String.valueOf(straightLine.yearlyDepreciation[i].get(firstYear + j))});
 				}
+				model.addRow(new Object[]{""});
 			}
 			
 			for (int i = 0; i < yearsToCalcDepFor; i++) {
@@ -71,6 +72,7 @@ public class DepreciationCalculator {
 					model.addRow(new Object[] {"Depreciation for " + String.valueOf(firstYear + j), 
 							String.valueOf(reducingBalance.yearlyDepreciation[i].get(firstYear + j))});
 				}
+				model.addRow(new Object[]{""});
 			}
 			for (int i = 0; i < yearsToCalcDepFor; i++) {
 				model.addRow(new Object[] {"Total depreciation for the year " + (firstYear + i) + ":",
