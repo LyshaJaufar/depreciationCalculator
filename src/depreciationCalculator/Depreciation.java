@@ -43,8 +43,6 @@ public class Depreciation {
 		
 		this.yearEndingDay = dayMonthYear[0];
 		this.yearEndingMonth = dayMonthYear[1];
-		System.out.println(this.yearEndingDay);
-		System.out.println(this.yearEndingMonth);
 	}
 	
 	public void findTotalDepreciationForTheYear() {
