@@ -86,10 +86,15 @@ public class ReducingBalance extends Depreciation {
 				NBV = 0;
 				depreciation = 0;
 				
-				if (purchaseYear > firstYear) {
+				if (purchaseYear < firstYear) {
+	    			int monthsElapsed = this.yearEndingMonth - purchaseMonth + 1;
+			    	accumulatedDep += depreciation;
+					NBV = this.cost[i] - accumulatedDep;
+					depreciation = (NBV * this.depreciationRate) * monthsElapsed/12;
+				} else if (purchaseYear > firstYear) {
 					depreciation = 0;
 				}
-				else if (purchaseMonth > this.yearEndingMonth) {
+				else if (purchaseMonth > this.yearEndingMonth && purchaseYear == firstYear) {
 	    			depreciation = 0;
 	    		} else if (purchaseMonth <= this.yearEndingMonth){
 	    			int monthsElapsed = this.yearEndingMonth - purchaseMonth + 1;

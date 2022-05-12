@@ -20,7 +20,7 @@ public class StraightLine extends Depreciation {
 		super(cost, purchaseDate, yearEnding, yearsToCalcDepFor, firstYear, numOfNCA);	
 		
 		splitYearEndingDate();
-	}
+	} 
 	
 	
 	public void calculate() {
@@ -55,11 +55,21 @@ public class StraightLine extends Depreciation {
 		    }
 		    
 		    if (ignoreYearYesOrNo == 1) {
+		    	String[] purchaseDateSplit;
 			    for (int i = 0; i < this.numOfNCA; i++) {
+		    		purchaseDateSplit = purchaseDate[i].split("/");
+		    		purchaseDay = Integer.parseInt(purchaseDateSplit[0]);
+		    		purchaseMonth = Integer.parseInt(purchaseDateSplit[1]);
+		    		purchaseYear = Integer.parseInt(purchaseDateSplit[2]);
+		    		
 			    	this.yearlyDepreciation[i] = new Hashtable<Integer, Integer>();
-					depreciation = this.depreciationRate * this.cost[i];
+			    	depreciation = 0;
 					
 					for (int j = 0; j < this.yearsToCalcDepFor; j++) {
+						depreciation = this.depreciationRate * this.cost[i];
+						if (purchaseYear > this.firstYear + j) {
+						    depreciation = 0;
+						}
 						this.yearlyDepreciation[i].put(this.firstYear + j, (int)depreciation);
 					}
 			    }
@@ -73,18 +83,31 @@ public class StraightLine extends Depreciation {
 	        		purchaseYear = Integer.parseInt(purchaseDateSplit[2]);
 			    	
 			    	this.yearlyDepreciation[i] = new Hashtable<Integer, Integer>();
+			    	depreciation = 0;
 			    	
-			    	if (purchaseMonth > this.yearEndingMonth) {
+			    	if (purchaseYear < firstYear) {
+			    		depreciation = (this.cost[i] * this.depreciationRate);
+			    	}
+			    	else if (purchaseYear > firstYear) {
+			    		depreciation = 0;
+			    	} else if (purchaseMonth > this.yearEndingMonth && purchaseYear == firstYear){
 			    		depreciation = 0;
 			    	} else {
 				    	int monthsElapsed = this.yearEndingMonth - purchaseMonth + 1;
-						depreciation = this.depreciationRate * this.cost[i] * (monthsElapsed/12);
-			    	}
-			    	
+						depreciation = (this.cost[i] * this.depreciationRate) * monthsElapsed/12;
+			    	}			
 			       	this.yearlyDepreciation[i].put(this.firstYear, (int)depreciation);		        	
-		        	
-			       	depreciation = ((this.cost[i] - this.scrapValue[i]) / this.expectedUsefulLife[i]);
-					for (int j = 1; j < this.yearsToCalcDepFor; j++) {
+
+					for (int j = 1; j < this.yearsToCalcDepFor; j++) {	
+						depreciation = this.depreciationRate * this.cost[i];
+
+						if (purchaseYear == this.firstYear + j && purchaseMonth <= this.yearEndingMonth) {
+						    depreciation = 0;
+
+							int monthsElapsed = this.yearEndingMonth - purchaseMonth + 1;
+							depreciation = (this.cost[i] * this.depreciationRate) * monthsElapsed/12;
+						}
+							
 						this.yearlyDepreciation[i].put(this.firstYear + j, (int)depreciation);
 					}
 			    }
@@ -112,12 +135,22 @@ public class StraightLine extends Depreciation {
 		    }
 
 	        if (ignoreYearYesOrNo == 1) {
-	        	
+	        	String[] purchaseDateSplit;
 	        	for (int i = 0; i < numOfNCA; i++) {
+		    		purchaseDateSplit = purchaseDate[i].split("/");
+		    		purchaseDay = Integer.parseInt(purchaseDateSplit[0]);
+		    		purchaseMonth = Integer.parseInt(purchaseDateSplit[1]);
+		    		purchaseYear = Integer.parseInt(purchaseDateSplit[2]);
+		    		
 	        		this.yearlyDepreciation[i] = new Hashtable<Integer, Integer>();
-		        	depreciation = (this.cost[i] - this.scrapValue[i]) / this.expectedUsefulLife[i];
+	        		depreciation = 0;
 		        	
 					for (int j = 0; j < this.yearsToCalcDepFor; j++) {
+						
+						depreciation = (this.cost[i] - this.scrapValue[i]) / this.expectedUsefulLife[i];
+						if (purchaseYear > this.firstYear + j) {
+						    depreciation = 0;
+						}
 						this.yearlyDepreciation[i].put(this.firstYear + j, (int)depreciation);
 					}
 	        	}
@@ -132,8 +165,14 @@ public class StraightLine extends Depreciation {
 	        		purchaseYear = Integer.parseInt(purchaseDateSplit[2]);
 	        		
 	        		this.yearlyDepreciation[i] = new Hashtable<Integer, Integer>();
+	        		depreciation = 0;
 
-			        if (purchaseMonth > this.yearEndingMonth) {
+	        		if (purchaseYear < firstYear) {
+	        			depreciation = ((this.cost[i] - this.scrapValue[i]) / this.expectedUsefulLife[i]);
+	        		}
+	        		else if (purchaseYear > firstYear) {
+	        			depreciation = 0;
+	        		} else if (purchaseMonth > this.yearEndingMonth && purchaseYear == firstYear) {
 			       		depreciation = 0;
 			       	} else {
 			       		int monthsElapsed = this.yearEndingMonth - purchaseMonth + 1;
@@ -141,9 +180,16 @@ public class StraightLine extends Depreciation {
 			        }
 			       	this.yearlyDepreciation[i].put(this.firstYear, (int)depreciation);		        	
 			        	
-			       	depreciation = ((this.cost[i] - this.scrapValue[i]) / this.expectedUsefulLife[i]);
 					for (int j = 1; j < this.yearsToCalcDepFor; j++) {
-						this.yearlyDepreciation[i].put(this.firstYear + j, (int)depreciation);
+					
+						depreciation = ((this.cost[i] - this.scrapValue[i]) / this.expectedUsefulLife[i]);
+						if (purchaseYear == this.firstYear + j && purchaseMonth <= this.yearEndingMonth) {
+						    depreciation = 0;
+
+							int monthsElapsed = this.yearEndingMonth - purchaseMonth + 1;
+							depreciation = ((this.cost[i] - this.scrapValue[i]) / this.expectedUsefulLife[i]) * monthsElapsed/12;
+						}
+						this.yearlyDepreciation[i].put(this.firstYear + j, (int)depreciation);					
 					}
 	        	}
 	        } 
