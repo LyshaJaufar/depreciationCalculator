@@ -15,12 +15,12 @@ Use the command line to answer the following questions:
 * Method to use to calculate depreciation
 
 * If you choose the 'Straight Line Method':
-* Technique (using scrap value or depreciation rate):
-* If scrap value is given:
-* * Useful life of the non-current asset 
-* * Estimated sale value after the useful life time (scrap value)
-*  If depreciation rate is given:
-* * What is the depreciation rate of the non-current asset
+* * Technique (using scrap value or depreciation rate):
+* * * If scrap value is given:
+* * * * Useful life of the non-current asset 
+* * * *Estimated sale value after the useful life time (scrap value)
+* * * If depreciation rate is given:
+* * * *What is the depreciation rate of the non-current asset
 
 * If you choose to use the 'Reducing Balance Method':
 * * What is the depreciation rate of the non-current asset 
