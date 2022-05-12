@@ -18,9 +18,9 @@ Use the command line to answer the following questions:
 * * Technique (using scrap value or depreciation rate):
 * * * If scrap value is given:
 * * * * Useful life of the non-current asset 
-* * * *Estimated sale value after the useful life time (scrap value)
+* * * * Estimated sale value after the useful life time (scrap value)
 * * * If depreciation rate is given:
-* * * *What is the depreciation rate of the non-current asset
+* * * * What is the depreciation rate of the non-current asset
 
 * If you choose to use the 'Reducing Balance Method':
 * * What is the depreciation rate of the non-current asset 
